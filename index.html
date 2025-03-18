@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Patient System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-section" id="loginSection">
+            <h2>Welcome to Patient Portal</h2>
+            <p>Please enter your ID number to continue</p>
+            <div class="login-form">
+                <input type="text" id="tcInput" placeholder="Enter your ID number" maxlength="11">
+                <button id="loginButton" onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <div class="chat-section hidden" id="chatSection">
+            <div class="patient-info" id="patientInfo">
+                <h3>Patient Information</h3>
+                <div id="patientDetails"></div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message system">
+                        Hello! I'm your virtual health assistant. How can I help you today?
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="userInput" placeholder="Describe your symptoms...">
+                    <button id="sendButton" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendations hidden" id="recommendationsSection">
+            <h3>Recommendations</h3>
+            <div id="recommendationsList"></div>
+        </div>
+
+        <div class="departments hidden" id="departmentsSection">
+            <h3>Available Departments</h3>
+            <div id="departmentsList"></div>
+        </div>
+
+        <div class="doctors hidden" id="doctorsSection">
+            <h3>Available Doctors</h3>
+            <div id="doctorsList"></div>
+        </div>
+
+        <div class="confirmation hidden" id="confirmationSection">
+            <h3>Appointment Confirmation</h3>
+            <div id="confirmationDetails"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
