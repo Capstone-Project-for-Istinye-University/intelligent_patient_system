@@ -3,14 +3,25 @@ const API_BASE_URL = 'http://localhost:8001/api';
 
 // DOM Elements
 const loginSection = document.getElementById('loginSection');
+const registerSection = document.getElementById('registerSection');
 const chatSection = document.getElementById('chatSection');
 const chatMessages = document.getElementById('chatMessages');
 const userInput = document.getElementById('userInput');
 const sendButton = document.getElementById('sendButton');
 const tcInput = document.getElementById('tcInput');
 const loginButton = document.getElementById('loginButton');
+const registerButton = document.getElementById('registerButton');
+const showRegisterButton = document.getElementById('showRegisterButton');
+const showLoginButton = document.getElementById('showLoginButton');
 const patientInfo = document.getElementById('patientInfo');
 const logoutButton = document.getElementById('logoutButton');
+
+// Registration form elements
+const registerTcInput = document.getElementById('registerTcInput');
+const nameInput = document.getElementById('nameInput');
+const dobInput = document.getElementById('dobInput');
+const phoneInput = document.getElementById('phoneInput');
+const emailInput = document.getElementById('emailInput');
 
 // Chat state
 let currentState = 'initial';
@@ -42,6 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
     loginButton.addEventListener('click', login);
     sendButton.addEventListener('click', sendMessage);
     logoutButton.addEventListener('click', logout);
+    registerButton.addEventListener('click', register);
+    
+    // Toggle registration/login form
+    showRegisterButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginSection.classList.add('hidden');
+        registerSection.classList.remove('hidden');
+    });
+    
+    showLoginButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        registerSection.classList.add('hidden');
+        loginSection.classList.remove('hidden');
+    });
 
     // Reset inactivity timer on user activity
     ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => {
@@ -79,24 +104,90 @@ function logout() {
 function displayPatientInfo(patient) {
     const details = document.createElement('div');
     details.innerHTML = `
-        <p><strong>Past Conditions:</strong> ${patient.past_conditions.join(', ')}</p>
+        <p><strong>Past Conditions:</strong> ${patient.past_conditions.length > 0 ? patient.past_conditions.join(', ') : 'None'}</p>
         <p><strong>Active Medications:</strong></p>
         <ul>
-            ${patient.medications
-                .filter(med => med.status === 'active')
-                .map(med => `<li>${med.name} (${med.dosage}, ${med.frequency})</li>`)
-                .join('')}
+            ${patient.medications && patient.medications.filter(med => med.status === 'active').length > 0 
+                ? patient.medications
+                    .filter(med => med.status === 'active')
+                    .map(med => `<li>${med.name} (${med.dosage}, ${med.frequency})</li>`)
+                    .join('')
+                : '<li>No active medications</li>'
+            }
         </ul>
         <p><strong>Recent Appointments:</strong></p>
         <ul>
-            ${patient.past_appointments
-                .slice(-2)
-                .map(apt => `<li>${apt.date}: ${apt.department} - ${apt.doctor}</li>`)
-                .join('')}
+            ${patient.past_appointments && patient.past_appointments.length > 0
+                ? patient.past_appointments
+                    .slice(-2)
+                    .map(apt => `<li>${apt.date}: ${apt.department} - ${apt.doctor}</li>`)
+                    .join('')
+                : '<li>No recent appointments</li>'
+            }
         </ul>
     `;
     patientInfo.querySelector('#patientDetails').innerHTML = '';
     patientInfo.querySelector('#patientDetails').appendChild(details);
+}
+
+// Register new patient
+async function register() {
+    const tcNumber = registerTcInput.value.trim();
+    const name = nameInput.value.trim();
+    const dob = dobInput.value;
+    const phone = phoneInput.value.trim();
+    const email = emailInput.value.trim();
+    
+    // Validate inputs
+    if (tcNumber.length !== 11) {
+        alert('Please enter a valid 11-digit ID number.');
+        return;
+    }
+    
+    if (!name || !dob || !phone || !email) {
+        alert('Please fill in all fields.');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/patient/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tc_number: tcNumber,
+                name: name,
+                date_of_birth: dob,
+                phone: phone,
+                email: email
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Registration failed');
+        }
+        
+        const data = await response.json();
+        
+        alert('Registration successful! You can now login with your ID number.');
+        
+        // Switch to login form and pre-fill TC number
+        registerSection.classList.add('hidden');
+        loginSection.classList.remove('hidden');
+        tcInput.value = tcNumber;
+        
+        // Clear registration form
+        registerTcInput.value = '';
+        nameInput.value = '';
+        dobInput.value = '';
+        phoneInput.value = '';
+        emailInput.value = '';
+        
+    } catch (error) {
+        console.error('Registration error:', error);
+        alert('An error occurred during registration. Please try again.');
+    }
 }
 
 // Handle login
@@ -109,7 +200,29 @@ async function login() {
 
     try {
         const response = await fetch(`${API_BASE_URL}/patient/${tcNumber}/history`);
+        
+        if (!response.ok) {
+            throw new Error('Patient not found');
+        }
+        
         const data = await response.json();
+        
+        // Check if this is a new patient with no history
+        const isNewPatient = (!data.past_appointments || data.past_appointments.length === 0) && 
+                             (!data.past_conditions || data.past_conditions.length === 0) &&
+                             (!data.medications || data.medications.length === 0);
+        
+        if (isNewPatient) {
+            // Ask if they want to complete their profile
+            if (confirm('Welcome to our system! Would you like to complete your profile with additional information?')) {
+                // Pre-fill the TC number in registration form
+                registerTcInput.value = tcNumber;
+                // Show registration form
+                loginSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+                return;
+            }
+        }
         
         currentPatient = data;
         currentTcNumber = tcNumber;
@@ -121,16 +234,24 @@ async function login() {
         addMessage(`Hello! I'm your virtual health assistant. Please describe your symptoms so I can help you.`);
         
         // Display patient info if they have any history
-        if (currentPatient.past_appointments && currentPatient.past_appointments.length > 0) {
-            displayPatientInfo(currentPatient);
-        }
+        displayPatientInfo(currentPatient);
         
         // Start inactivity timer
         resetInactivityTimer();
         
     } catch (error) {
-        console.error('Login error:', error);
-        alert('An error occurred while logging in. Please try again.');
+        if (error.message === 'Patient not found') {
+            if (confirm('Your ID number is not registered. Would you like to register now?')) {
+                // Pre-fill the TC number in registration form
+                registerTcInput.value = tcNumber;
+                // Show registration form
+                loginSection.classList.add('hidden');
+                registerSection.classList.remove('hidden');
+            }
+        } else {
+            console.error('Login error:', error);
+            alert('An error occurred while logging in. Please try again.');
+        }
     }
 }
 
@@ -250,7 +371,7 @@ async function processUserInput(message) {
             // Show department options
             addMessage("Based on your symptoms, I recommend the following departments:");
             const deptButtons = diagnosis.recommended_departments
-                .map(dept => `<button onclick="selectDepartment('${dept}')">${dept}</button>`)
+                .map(dept => `<button onclick="selectDepartment('${dept}')"><i class="fas fa-hospital-user"></i> ${dept}</button>`)
                 .join(' ');
             
             const deptDiv = document.createElement('div');

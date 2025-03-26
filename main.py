@@ -71,8 +71,120 @@ class AppointmentCancelRequest(BaseModel):
     appointment_id: int
 
 
-# Örnek hasta veritabanı (gerçek uygulamada bir veritabanında saklanacak)
-# Example patient database (in a real application, this would be stored in a database)
+# Departman ve doktor verileri
+DEPARTMENTS = {
+    "ENT": ["Dr. John Smith", "Dr. Emily Brown", "Dr. Michael Davis", "Dr. Laura Williams"],
+    "Neurology": ["Dr. Sarah Johnson", "Dr. David Miller", "Dr. Lisa Anderson", "Dr. Richard Lee"],
+    "Cardiology": ["Dr. Michael Chen", "Dr. Emma Wilson", "Dr. Robert Taylor", "Dr. Catherine Brooks"],
+    "Ophthalmology": ["Dr. Rachel Green", "Dr. Thomas Moore", "Dr. Jennifer Lee", "Dr. Daniel Clark"],
+    "Internal Medicine": ["Dr. James Wilson", "Dr. Jessica Martinez", "Dr. William Turner", "Dr. Sophia Adams"],
+    "Orthopedics": ["Dr. Mark Robinson", "Dr. Julia Scott", "Dr. Robert Johnson", "Dr. Elizabeth Chen"],
+    "Dermatology": ["Dr. Alice Kim", "Dr. Steven Park", "Dr. Michelle Wong", "Dr. Kevin Garcia"],
+    "Gastroenterology": ["Dr. Thomas Lewis", "Dr. Patricia White", "Dr. Charles Martin", "Dr. Nancy Rodriguez"],
+    "Psychiatry": ["Dr. Helen Carter", "Dr. George Baker", "Dr. Susan Evans", "Dr. Brian Thompson"],
+    "Pediatrics": ["Dr. Anna Moore", "Dr. Paul Roberts", "Dr. Maria Lopez", "Dr. John Wilson"]
+}
+
+# Semptom-departman eşleştirmeleri ve ilk tedavi önerileri
+SYMPTOM_MAPPING = {
+    "headache": {
+        "departments": ["Neurology", "ENT"],
+        "initial_treatment": "Rest in a quiet, dark room. You may take over-the-counter pain medication. If pain is severe and persistent, please seek medical attention.",
+        "severity_check": ["vision problems", "vomiting", "fever", "stiff neck", "confusion"]
+    },
+    "migraine": {
+        "departments": ["Neurology"],
+        "initial_treatment": "Rest in a dark, quiet room. Apply cold compresses to your forehead. Consider taking prescribed migraine medication if available.",
+        "severity_check": ["vision loss", "numbness", "difficulty speaking"]
+    },
+    "fever": {
+        "departments": ["Internal Medicine"],
+        "initial_treatment": "Stay hydrated and rest. Take fever reducer if temperature exceeds 101.3°F (38.5°C). Seek medical attention if fever persists for more than 3 days.",
+        "severity_check": ["difficulty breathing", "confusion", "rash", "severe pain"]
+    },
+    "sore throat": {
+        "departments": ["ENT"],
+        "initial_treatment": "Gargle with warm salt water. Stay hydrated. You may use throat lozenges for temporary relief.",
+        "severity_check": ["difficulty swallowing", "high fever", "rash", "swollen lymph nodes"]
+    },
+    "stomach pain": {
+        "departments": ["Internal Medicine", "Gastroenterology"],
+        "initial_treatment": "Eat bland foods. Avoid acidic and spicy foods. Consider taking antacids if needed.",
+        "severity_check": ["severe abdominal pain", "vomiting", "diarrhea", "blood in stool", "fever"]
+    },
+    "back pain": {
+        "departments": ["Orthopedics", "Neurology"],
+        "initial_treatment": "Rest and apply ice for the first 48-72 hours, then switch to heat. Take over-the-counter pain relievers as directed.",
+        "severity_check": ["inability to move", "numbness", "loss of bladder control", "fever", "leg weakness"]
+    },
+    "joint pain": {
+        "departments": ["Orthopedics", "Internal Medicine"],
+        "initial_treatment": "Rest the affected joint. Apply ice to reduce swelling. Consider over-the-counter anti-inflammatory medication.",
+        "severity_check": ["severe swelling", "redness", "inability to move joint", "fever"]
+    },
+    "skin rash": {
+        "departments": ["Dermatology"],
+        "initial_treatment": "Avoid scratching. Apply cold compresses and consider calamine lotion or hydrocortisone cream for itching.",
+        "severity_check": ["difficulty breathing", "swelling of face or tongue", "fever", "spreading rapidly"]
+    },
+    "eye pain": {
+        "departments": ["Ophthalmology"],
+        "initial_treatment": "Rest your eyes. Avoid bright lights. Do not rub your eyes. Use artificial tears if they feel dry.",
+        "severity_check": ["vision changes", "severe pain", "light sensitivity", "discharge"]
+    },
+    "chest pain": {
+        "departments": ["Cardiology", "Internal Medicine"],
+        "initial_treatment": "If experiencing severe chest pain, especially with shortness of breath, sweating, or nausea, call emergency services immediately.",
+        "severity_check": ["shortness of breath", "radiating pain to arm or jaw", "sweating", "nausea", "irregular heartbeat"]
+    },
+    "cough": {
+        "departments": ["Internal Medicine", "ENT"],
+        "initial_treatment": "Stay hydrated. Use cough drops or honey for temporary relief. Avoid irritants like smoke.",
+        "severity_check": ["difficulty breathing", "coughing up blood", "chest pain", "high fever"]
+    },
+    "dizziness": {
+        "departments": ["Neurology", "ENT", "Cardiology"],
+        "initial_treatment": "Sit or lie down immediately. Move slowly when changing positions. Stay hydrated.",
+        "severity_check": ["severe headache", "difficulty speaking", "vision changes", "numbness", "fainting"]
+    },
+    "breathing difficulty": {
+        "departments": ["Cardiology", "Internal Medicine"],
+        "initial_treatment": "For severe breathing difficulty, seek emergency care immediately. Sit upright and try to stay calm.",
+        "severity_check": ["blue lips or face", "chest pain", "inability to speak in full sentences", "confusion"]
+    },
+    "anxiety": {
+        "departments": ["Psychiatry", "Internal Medicine"],
+        "initial_treatment": "Practice deep breathing exercises. Focus on your breath and try to stay in the present moment.",
+        "severity_check": ["chest pain", "thoughts of harming yourself", "panic attacks", "inability to function"]
+    },
+    "depression": {
+        "departments": ["Psychiatry"],
+        "initial_treatment": "Reach out to a trusted friend or family member. Maintain a regular routine and consider physical activity.",
+        "severity_check": ["thoughts of suicide", "inability to function", "severe withdrawal", "significant changes in eating or sleeping"]
+    },
+    "fatigue": {
+        "departments": ["Internal Medicine"],
+        "initial_treatment": "Ensure you're getting adequate sleep. Maintain a balanced diet and stay hydrated. Consider light exercise.",
+        "severity_check": ["extreme weakness", "fever", "unexplained weight loss", "shortness of breath"]
+    },
+    "nausea": {
+        "departments": ["Gastroenterology", "Internal Medicine"],
+        "initial_treatment": "Eat small, bland meals. Stay hydrated with small sips of clear liquids. Avoid strong odors.",
+        "severity_check": ["severe vomiting", "inability to keep fluids down", "abdominal pain", "dizziness"]
+    },
+    "ear pain": {
+        "departments": ["ENT"],
+        "initial_treatment": "Apply a warm compress to the affected ear. Take over-the-counter pain relievers as directed.",
+        "severity_check": ["severe pain", "discharge from ear", "hearing loss", "fever", "dizziness"]
+    },
+    "insomnia": {
+        "departments": ["Psychiatry", "Neurology"],
+        "initial_treatment": "Establish a regular sleep schedule. Avoid caffeine and screens before bedtime. Create a comfortable sleep environment.",
+        "severity_check": ["extreme fatigue", "mood changes", "inability to function during the day", "chronic condition"]
+    }
+}
+
+# Daha fazla örnek hasta verileri
 PATIENT_DATABASE = {
     "12345678901": {
         "past_conditions": ["Migraine", "Hypertension"],
@@ -84,9 +196,9 @@ PATIENT_DATABASE = {
         ],
         "past_appointments": [
             {"department": "Neurology", "date": "2024-01-15",
-                "doctor": "Dr. Sarah Johnson", "diagnosis": "Migraine"},
+                "doctor": "Dr. Sarah Johnson", "diagnosis": "Migraine", "id": 1},
             {"department": "Cardiology", "date": "2024-02-20",
-                "doctor": "Dr. Michael Chen", "diagnosis": "Hypertension"}
+                "doctor": "Dr. Michael Chen", "diagnosis": "Hypertension", "id": 2}
         ]
     },
     "98765432109": {
@@ -99,43 +211,55 @@ PATIENT_DATABASE = {
         ],
         "past_appointments": [
             {"department": "Pulmonology", "date": "2024-02-01",
-                "doctor": "Dr. Emily White", "diagnosis": "Asthma"},
+                "doctor": "Dr. Emily White", "diagnosis": "Asthma", "id": 1},
             {"department": "Internal Medicine", "date": "2024-03-01",
-                "doctor": "Dr. James Wilson", "diagnosis": "Diabetes Control"}
+                "doctor": "Dr. James Wilson", "diagnosis": "Diabetes Control", "id": 2}
         ]
-    }
-}
-
-# Departman ve doktor verileri
-DEPARTMENTS = {
-    "ENT": ["Dr. John Smith", "Dr. Emily Brown", "Dr. Michael Davis"],
-    "Neurology": ["Dr. Sarah Johnson", "Dr. David Miller", "Dr. Lisa Anderson"],
-    "Cardiology": ["Dr. Michael Chen", "Dr. Emma Wilson", "Dr. Robert Taylor"],
-    "Ophthalmology": ["Dr. Rachel Green", "Dr. Thomas Moore", "Dr. Jennifer Lee"],
-    "Internal Medicine": ["Dr. James Wilson", "Dr. Jessica Martinez", "Dr. William Turner"]
-}
-
-# Semptom-departman eşleştirmeleri ve ilk tedavi önerileri
-SYMPTOM_MAPPING = {
-    "headache": {
-        "departments": ["Neurology", "ENT"],
-        "initial_treatment": "Rest in a quiet, dark room. You may take over-the-counter pain medication. If pain is severe and persistent, please seek medical attention.",
-        "severity_check": ["vision problems", "vomiting", "fever"]
     },
-    "fever": {
-        "departments": ["Internal Medicine"],
-        "initial_treatment": "Stay hydrated and rest. Take fever reducer if temperature exceeds 101.3°F (38.5°C). Seek medical attention if fever persists for more than 3 days.",
-        "severity_check": ["difficulty breathing", "confusion"]
+    "11122233344": {
+        "past_conditions": ["Arthritis", "Hypercholesterolemia"],
+        "medications": [
+            {"name": "Ibuprofen", "status": "active",
+                "dosage": "600mg", "frequency": "twice daily"},
+            {"name": "Lipitor", "status": "active",
+                "dosage": "20mg", "frequency": "once daily"}
+        ],
+        "past_appointments": [
+            {"department": "Orthopedics", "date": "2024-01-10",
+                "doctor": "Dr. Mark Robinson", "diagnosis": "Rheumatoid Arthritis", "id": 1},
+            {"department": "Cardiology", "date": "2024-02-15",
+                "doctor": "Dr. Emma Wilson", "diagnosis": "Hypercholesterolemia", "id": 2}
+        ]
     },
-    "sore throat": {
-        "departments": ["ENT"],
-        "initial_treatment": "Gargle with warm salt water. Stay hydrated. You may use throat lozenges for temporary relief.",
-        "severity_check": ["difficulty swallowing", "high fever"]
+    "22233344455": {
+        "past_conditions": ["Depression", "Insomnia"],
+        "medications": [
+            {"name": "Fluoxetine", "status": "active",
+                "dosage": "20mg", "frequency": "once daily"},
+            {"name": "Ambien", "status": "active",
+                "dosage": "10mg", "frequency": "as needed before sleep"}
+        ],
+        "past_appointments": [
+            {"department": "Psychiatry", "date": "2024-02-05",
+                "doctor": "Dr. Helen Carter", "diagnosis": "Major Depressive Disorder", "id": 1},
+            {"department": "Neurology", "date": "2024-03-10",
+                "doctor": "Dr. Lisa Anderson", "diagnosis": "Chronic Insomnia", "id": 2}
+        ]
     },
-    "stomach pain": {
-        "departments": ["Internal Medicine"],
-        "initial_treatment": "Eat bland foods. Avoid acidic and spicy foods. Consider taking antacids if needed.",
-        "severity_check": ["severe abdominal pain", "vomiting", "diarrhea"]
+    "33344455566": {
+        "past_conditions": ["Eczema", "Allergic Rhinitis"],
+        "medications": [
+            {"name": "Hydrocortisone Cream", "status": "active",
+                "dosage": "1%", "frequency": "twice daily"},
+            {"name": "Cetirizine", "status": "active",
+                "dosage": "10mg", "frequency": "once daily"}
+        ],
+        "past_appointments": [
+            {"department": "Dermatology", "date": "2024-01-20",
+                "doctor": "Dr. Alice Kim", "diagnosis": "Atopic Dermatitis", "id": 1},
+            {"department": "ENT", "date": "2024-02-25",
+                "doctor": "Dr. John Smith", "diagnosis": "Seasonal Allergies", "id": 2}
+        ]
     }
 }
 
@@ -145,9 +269,24 @@ SYMPTOM_MAPPING = {
 @app.post("/api/patient/register")
 async def register_patient(patient_data: Dict, db: Session = Depends(get_db)):
     try:
-        patient_intake = PatientIntakeAgent(db)
-        patient = await patient_intake.process(patient_data)
-        return {"message": "Patient registered successfully", "patient_id": patient.id}
+        tc_number = patient_data.get("tc_number")
+        
+        if not tc_number or len(tc_number) != 11:
+            raise HTTPException(status_code=400, detail="Invalid TC number")
+            
+        # Create or update patient record
+        if tc_number not in PATIENT_DATABASE:
+            PATIENT_DATABASE[tc_number] = {
+                "past_conditions": [],
+                "medications": [],
+                "past_appointments": []
+            }
+            
+        # In a real app, we would use the database here
+        # patient_intake = PatientIntakeAgent(db)
+        # patient = await patient_intake.process(patient_data)
+        
+        return {"message": "Patient registered successfully", "tc_number": tc_number}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

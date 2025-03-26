@@ -11,11 +11,87 @@
 <body>
     <div class="container">
         <div class="login-section" id="loginSection">
-            <h2>Welcome to Patient Portal</h2>
-            <p>Please enter your ID number to continue</p>
-            <div class="login-form">
-                <input type="text" id="tcInput" placeholder="Enter your ID number" maxlength="11">
-                <button id="loginButton" onclick="login()">Login</button>
+            <div class="logo-section">
+                <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+                <h1>MedAssist</h1>
+            </div>
+            <div class="login-content">
+                <div class="login-image">
+                    <img src="https://img.freepik.com/free-vector/doctors-concept-illustration_114360-1515.jpg" alt="Medical professionals">
+                </div>
+                <div class="login-form-container">
+                    <h2>Welcome to Patient Portal</h2>
+                    <p>Your AI-powered healthcare assistant</p>
+                    <div class="login-form">
+                        <div class="input-group">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="tcInput" placeholder="Enter your ID number" maxlength="11">
+                        </div>
+                        <button id="loginButton" class="primary-btn">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <p class="register-link">Don't have an account? <a href="#" id="showRegisterButton">Register now</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <i class="fas fa-stethoscope"></i>
+                    <h3>AI Diagnosis</h3>
+                    <p>Smart symptom analysis</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Appointments</h3>
+                    <p>Easy scheduling</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-user-md"></i>
+                    <h3>Specialists</h3>
+                    <p>Expert doctors</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="register-section hidden" id="registerSection">
+            <div class="logo-section">
+                <div class="logo-icon"><i class="fas fa-heartbeat"></i></div>
+                <h1>MedAssist</h1>
+            </div>
+            <div class="register-content">
+                <div class="register-form-container">
+                    <h2>Create an Account</h2>
+                    <p>Join our healthcare platform</p>
+                    <div class="register-form">
+                        <div class="input-group">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="registerTcInput" placeholder="ID number (11 digits)" maxlength="11">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="nameInput" placeholder="Full Name">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-calendar"></i>
+                            <input type="date" id="dobInput" placeholder="Date of Birth">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="text" id="phoneInput" placeholder="Phone Number">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="emailInput" placeholder="Email Address">
+                        </div>
+                        <button id="registerButton" class="primary-btn">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                        <p class="login-link">Already have an account? <a href="#" id="showLoginButton">Login</a></p>
+                    </div>
+                </div>
+                <div class="register-image">
+                    <img src="https://img.freepik.com/free-vector/online-doctor-consultation-illustration_88138-414.jpg" alt="Medical consultation">
+                </div>
             </div>
         </div>
 
@@ -23,6 +99,7 @@
             <div class="patient-info" id="patientInfo">
                 <h3>Patient Information</h3>
                 <div id="patientDetails"></div>
+                <button id="logoutButton" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
 
             <div class="chat-container">
@@ -33,7 +110,7 @@
                 </div>
                 <div class="chat-input">
                     <input type="text" id="userInput" placeholder="Describe your symptoms...">
-                    <button id="sendButton" onclick="sendMessage()">Send</button>
+                    <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>

@@ -17,6 +17,11 @@
     --light-gray: #f8f9fa;
     --border-color: #dadce0;
     --shadow-color: rgba(0, 0, 0, 0.1);
+    --success-color: #34a853;
+    --warning-color: #fbbc05;
+    --error-color: #ea4335;
+    --medical-blue: #0077cc;
+    --medical-green: #00a86b;
 }
 
 /* Reset & Base Styles */
@@ -524,112 +529,329 @@ footer {
 
 /* Login Section */
 .login-section {
-    max-width: 400px;
-    margin: 100px auto;
-    padding: 40px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px var(--shadow-color);
-    text-align: center;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin: 40px auto;
+    max-width: 1000px;
+    transition: all 0.3s ease;
 }
 
-.login-section h1 {
-    color: var(--primary-color);
-    margin-bottom: 30px;
-    font-size: 28px;
-}
-
-.login-form {
+.logo-section {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    background-color: var(--primary-color);
+    color: var(--white);
 }
 
-.login-form input {
-    padding: 12px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 16px;
+.logo-icon {
+    font-size: 2.5rem;
+    margin-right: 15px;
+    color: var(--white);
+}
+
+.logo-section h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.login-content {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+}
+
+.login-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-image img {
+    max-width: 100%;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-form-container {
+    flex: 1;
+    padding: 20px;
+}
+
+.login-form-container h2 {
+    color: var(--primary-dark);
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.login-form-container p {
+    color: var(--text-light);
+    margin-bottom: 25px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gray-200);
+    padding-bottom: 8px;
     transition: border-color 0.3s ease;
 }
 
-.login-form input:focus {
-    outline: none;
+.input-group:focus-within {
     border-color: var(--primary-color);
 }
 
-.login-form button {
-    padding: 12px 24px;
-    background: var(--primary-color);
-    color: white;
+.input-group i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+.input-group input {
+    flex: 1;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    outline: none;
+    background: transparent;
+    font-size: 1rem;
+    padding: 8px 0;
 }
 
-.login-form button:hover {
-    background: var(--secondary-color);
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-/* Patient Info */
-.patient-info {
-    background: var(--light-gray);
+.register-link, .login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-light);
+}
+
+.register-link a, .login-link a {
+    color: var(--primary-color);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.register-link a:hover, .login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Feature Cards */
+.feature-cards {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px 30px;
+    background-color: var(--background-light);
+    border-top: 1px solid var(--gray-200);
+}
+
+.feature-card {
+    flex: 1;
+    text-align: center;
     padding: 20px;
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin: 0 10px;
+    transition: all 0.3s ease;
 }
 
-.patient-info h2 {
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card i {
+    font-size: 2rem;
     color: var(--primary-color);
     margin-bottom: 15px;
-    font-size: 24px;
 }
 
-.patient-info p {
-    margin-bottom: 10px;
+.feature-card h3 {
     color: var(--text-color);
-}
-
-.patient-info ul {
-    list-style: none;
-    margin-left: 20px;
-}
-
-.patient-info li {
+    font-size: 1.2rem;
     margin-bottom: 8px;
-    color: var(--text-color);
 }
 
-/* Treatment Recommendations */
-.treatment-recommendation {
-    background-color: var(--accent-color);
-    color: var(--text-color);
-    padding: 10px 15px;
-    border-radius: var(--border-radius);
-    margin-top: 10px;
+.feature-card p {
+    color: var(--text-light);
     font-size: 0.9rem;
 }
 
-.warning-message {
-    background-color: #ff6b6b;
-    color: var(--white);
-    padding: 10px 15px;
+/* Registration Section */
+.register-section {
+    background-color: var(--white);
     border-radius: var(--border-radius);
-    margin-top: 10px;
-    font-size: 0.9rem;
-}
-
-/* Chat Section */
-.chat-section {
-    max-width: 1000px;
-    margin: 40px auto;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px var(--shadow-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     overflow: hidden;
+    margin: 40px auto;
+    max-width: 1000px;
+    transition: all 0.3s ease;
 }
 
+.register-content {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+}
+
+.register-form-container {
+    flex: 1;
+    padding: 20px;
+}
+
+.register-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-image img {
+    max-width: 100%;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.register-form {
+    max-width: 400px;
+}
+
+/* Chat section improvements */
+.chat-section {
+    display: flex;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin: 20px auto;
+    max-width: 1000px;
+}
+
+.patient-info {
+    flex: 0 0 300px;
+    background-color: var(--background-light);
+    padding: 20px;
+    border-right: 1px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.chat-input {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid var(--gray-200);
+    background-color: var(--white);
+}
+
+.chat-input input {
+    flex: 1;
+    border: 1px solid var(--gray-200);
+    border-radius: 24px;
+    padding: 12px 20px;
+    outline: none;
+    font-size: 0.95rem;
+    margin-right: 10px;
+    transition: border-color 0.3s;
+}
+
+.chat-input input:focus {
+    border-color: var(--primary-color);
+}
+
+.chat-input button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.chat-input button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.message {
+    max-width: 80%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    position: relative;
+}
+
+.message.system {
+    background-color: var(--gray-100);
+    color: var(--text-color);
+    border-top-left-radius: 4px;
+    align-self: flex-start;
+}
+
+.message.user {
+    background-color: var(--primary-light);
+    color: white;
+    border-top-right-radius: 4px;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+/* Logout button */
+.logout-button {
+    margin-top: auto;
+    background-color: var(--error-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Department buttons */
 .department-buttons {
     display: flex;
     flex-wrap: wrap;
@@ -638,94 +860,106 @@ footer {
 }
 
 .department-buttons button {
-    padding: 8px 16px;
-    background: var(--accent-color);
-    color: var(--text-color);
+    background-color: var(--medical-blue);
+    color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: 20px;
+    padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.department-buttons button::before {
+    content: '\f0f1';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
 }
 
 .department-buttons button:hover {
-    background: #f9ab00;
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
+/* Doctor slots */
 .doctor-slots {
-    background: var(--light-gray);
+    margin: 15px 0;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius);
     padding: 15px;
-    border-radius: 8px;
-    margin: 10px 0;
 }
 
 .doctor-slots p {
-    color: var(--primary-color);
-    font-weight: 600;
     margin-bottom: 10px;
+    font-weight: 500;
 }
 
 .time-slots {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 }
 
 .time-slots button {
-    padding: 6px 12px;
-    background: white;
+    background-color: var(--white);
+    border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-    border-radius: 4px;
-    font-size: 14px;
+    border-radius: 20px;
+    padding: 8px 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    transition: all 0.3s;
 }
 
 .time-slots button:hover {
-    background: var(--primary-color);
+    background-color: var(--primary-color);
     color: white;
 }
 
-/* Logout Button */
-.logout-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 8px 16px;
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-    background: #c82333;
-}
-
-/* Utility Classes */
+/* Utility classes */
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* Responsive Design */
+@media (max-width: 992px) {
+    .login-content, .register-content {
+        flex-direction: column;
+    }
+    
+    .login-image, .register-image {
+        order: -1;
+    }
+
+    .feature-cards {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .feature-card {
+        margin: 0;
+    }
+}
+
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-
     .chat-section {
-        margin: 20px auto;
+        flex-direction: column;
     }
 
-    .message {
-        max-width: 90%;
+    .patient-info {
+        flex: 0 0 auto;
+        border-right: none;
+        border-bottom: 1px solid var(--gray-200);
     }
 
-    .chat-input {
-        padding: 10px;
+    .chat-container {
+        height: 500px;
+    }
+    
+    .login-section, .register-section {
+        margin: 20px;
     }
 } 
